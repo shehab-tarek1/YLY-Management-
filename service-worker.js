@@ -2,7 +2,7 @@
 // YLY System - Service Worker (A4 Standard)
 // ==========================================
 
-const CACHE_VERSION = 'v3.0.0';
+const CACHE_VERSION = 'v3.0.2';
 const CACHE_NAME = `yly-system-cache-${CACHE_VERSION}`;
 
 // الأصول الأساسية المطلوبة للعمل بدون إنترنت شاملة أيقوناتك المحلية
@@ -13,7 +13,6 @@ const CORE_ASSETS = [
     './tailwind.min.css',
     './styles.css',
     './app.js',
-    './firebase-config.js',
     './admin.html',
     './form.html',
     './icons/icon-192.png',
@@ -66,7 +65,7 @@ self.addEventListener('fetch', (event) => {
     }
 
     // استراتيجية HTML: Network First مع العودة للكاش
-    if (request.mode === 'navigate' || request.headers.get('accept').includes('text/html')) {
+    if (request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html') || (url.origin === location.origin && /\.(js|css|json)$/.test(url.pathname))) {
         event.respondWith(
             fetch(request)
                 .then((networkResponse) => {
