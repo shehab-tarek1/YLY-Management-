@@ -194,6 +194,14 @@
 
     <!-- سيتم إدراج JavaScript هنا في المرحلة الثالثة -->
     <script type="module" src="app.js"></script>
+    <script>
+      // تشخيص: لو app.js ماتحملش (ملف ناقص أو الصفحة مفتوحة كملف بدل رابط)
+      setTimeout(() => {
+        if (window.__ylyLoaded) return;
+        const l = document.getElementById('loadingOverlay');
+        if (l) { l.style.display = 'flex'; l.style.opacity = '1'; l.innerHTML = '<div style="text-align:center;padding:20px;font-weight:700;color:#991b1b;direction:rtl">تعذر تشغيل التطبيق<br><small style="color:#444">تأكد من رفع app.js واستخدام رابط الموقع (https) وليس فتح الملف مباشرة، ثم امسح الكاش</small></div>'; }
+      }, 6000);
+    </script>
 
 <!-- كود تشغيل الـ Service Worker وإظهار بنر التثبيت تلقائياً -->
 <script>
