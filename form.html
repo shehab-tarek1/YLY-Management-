@@ -50,7 +50,15 @@ button:disabled{opacity:.6}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
+const firebaseConfig = {
+    apiKey: "AIzaSyDbEwtCHsaxhfB1OhbvabGlwE7X0zR5npg",
+    authDomain: "yly-sharqia.firebaseapp.com",
+    projectId: "yly-sharqia",
+    storageBucket: "yly-sharqia.firebasestorage.app",
+    messagingSenderId: "107394485972",
+    appId: "1:107394485972:web:de901ff55eabe0516c7541",
+    measurementId: "G-PDZNLN4EMF"
+};
 
 const db = getFirestore(initializeApp(firebaseConfig));
 const $ = (id) => document.getElementById(id);
