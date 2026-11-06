@@ -2,7 +2,18 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, onSnapshot, query, where, enableMultiTabIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-import { firebaseConfig } from "./firebase-config.js";
+// ==========================================
+// Firebase Configuration (مشروع yly-sharqia)
+// ==========================================
+const firebaseConfig = {
+    apiKey: "AIzaSyDbEwtCHsaxhfB1OhbvabGlwE7X0zR5npg",
+    authDomain: "yly-sharqia.firebaseapp.com",
+    projectId: "yly-sharqia",
+    storageBucket: "yly-sharqia.firebasestorage.app",
+    messagingSenderId: "107394485972",
+    appId: "1:107394485972:web:de901ff55eabe0516c7541",
+    measurementId: "G-PDZNLN4EMF"
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -350,6 +361,7 @@ window.exportToExcelStyle = async function(headers, rows, reportTitle, fileName)
 // ==========================================
 const loading = document.getElementById('loadingOverlay');
 const hideLoading = () => { if (loading) { loading.style.opacity = '0'; setTimeout(() => loading.style.display = 'none', 300); } };
+window.__ylyLoaded = true;
 const failSafeTimer = setTimeout(hideLoading, 5000);
 
 let unsubBase = []; let unsubScoped = [];
