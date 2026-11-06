@@ -49,7 +49,7 @@ td{border-bottom:1px solid #e5e7eb;padding:6px;text-align:center;font-size:12px}
     <p style="color:#6b7280;margin:0 0 12px;font-size:11px">لوحة التحكم</p>
     <input id="aMail" type="email" placeholder="البريد الإلكتروني" style="margin-bottom:8px;direction:ltr">
     <input id="aPass" type="password" placeholder="كلمة المرور" style="margin-bottom:10px;direction:ltr">
-    <button class="b" style="width:100%" onclick="A.login()">دخول</button>
+    <button id="aBtn" class="b" style="width:100%" onclick="A.login()">دخول</button>
     <p id="aErr" class="hidden" style="color:#dc2626;font-weight:700;font-size:11px"></p>
 </div>
 
@@ -179,7 +179,15 @@ td{border-bottom:1px solid #e5e7eb;padding:6px;text-align:center;font-size:12px}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, setDoc, getDocs, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { firebaseConfig } from "./firebase-config.js";
+const firebaseConfig = {
+    apiKey: "AIzaSyDbEwtCHsaxhfB1OhbvabGlwE7X0zR5npg",
+    authDomain: "yly-sharqia.firebaseapp.com",
+    projectId: "yly-sharqia",
+    storageBucket: "yly-sharqia.firebasestorage.app",
+    messagingSenderId: "107394485972",
+    appId: "1:107394485972:web:de901ff55eabe0516c7541",
+    measurementId: "G-PDZNLN4EMF"
+};
 
 // UID حساب الأدمن (نفسه في firestore.rules)
 const ADMIN_UIDS = ['sygWrSyAcAhmZMmXG3rUUVgRMYP2'];
@@ -201,9 +209,14 @@ const formUrl = (code) => location.href.replace(/admin\.html.*$/, '') + 'form.ht
 window.A = {
     // ---------- الدخول ----------
     async login() {
-        $('aErr').classList.add('hidden');
+        const btn = $('aBtn'), err = $('aErr');
+        err.classList.add('hidden'); btn.disabled = true; btn.innerText = 'جاري تسجيل الدخول...';
         try { await signInWithEmailAndPassword(auth, $('aMail').value.trim(), $('aPass').value); }
-        catch (e) { $('aErr').innerText = 'بيانات الدخول غير صحيحة'; $('aErr').classList.remove('hidden'); }
+        catch (e) {
+            const m = { 'auth/invalid-credential': 'الإيميل أو كلمة المرور غير صحيحة', 'auth/invalid-email': 'صيغة الإيميل غير صحيحة', 'auth/operation-not-allowed': 'فعّل Email/Password من Firebase Authentication', 'auth/network-request-failed': 'مشكلة في الاتصال بالإنترنت' };
+            err.innerText = (m[e.code] || 'تعذر الدخول') + ' (' + (e.code || e.message) + ')'; err.classList.remove('hidden');
+        }
+        btn.disabled = false; btn.innerText = 'دخول';
     },
     async logout() { await signOut(auth); location.reload(); },
     tab(t) {
@@ -417,6 +430,7 @@ onAuthStateChanged(auth, (u) => {
     }));
 });
 window.addEventListener('resize', () => S.cur && A.renderCover());
+window.addEventListener('error', e => { const x = $('aErr'); if (x) { x.innerText = 'خطأ في الصفحة: ' + e.message; x.classList.remove('hidden'); } });
 </script>
 </body>
 </html>
