@@ -1,0 +1,642 @@
+/* =========================================
+   Base & Typography (Ultra Compact Original)
+========================================= */
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #f3f4f6;
+    padding-bottom: 80px;
+    font-size: 10px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    overflow-x: hidden !important;
+}
+
+body.modal-open {
+    overflow: hidden !important;
+    height: 100vh;
+}
+
+body.internal-open #mainHeader,
+body.internal-open #navBar {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    body { font-size: 12px; padding-bottom: 20px; }
+    .container { max-width: 95% !important; }
+}
+
+/* =========================================
+   Custom Scrollbar
+========================================= */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 4px; }
+
+/* =========================================
+   Inputs & Forms (ضبط محاذاة الهواتف)
+========================================= */
+input, select, textarea {
+    border: 1px solid #9ca3af;
+    border-radius: 0.25rem;
+    background-color: #ffffff;
+    color: #111827;
+    font-weight: 700;
+    transition: all 0.2s ease-in-out;
+    padding-right: 0.5rem !important;
+    padding-left: 1.5rem !important;
+    height: 30px;
+    font-size: 11px !important;
+}
+
+input[type="tel"], #stdOwnPhone {
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+input[type="tel"]::placeholder, #stdOwnPhone::placeholder {
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 1px rgba(30, 58, 138, 0.2);
+    outline: none;
+}
+
+.input-wrapper { position: relative; width: 100%; }
+.input-icon {
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
+    width: 12px;
+    height: 12px;
+    z-index: 10;
+}
+
+/* Date/Month Pickers */
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button,
+input[type="month"]::-webkit-inner-spin-button,
+input[type="month"]::-webkit-clear-button,
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+    display: none !important;
+}
+
+input[type="date"], input[type="month"], input[type="number"] { -moz-appearance: textfield !important; }
+input[type="date"], input[type="month"] { text-align: right !important; padding-left: 25px !important; background-image: none !important; }
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator {
+    background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="%231e3a8a"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>') no-repeat center !important;
+    background-size: 16px !important;
+    color: transparent !important;
+    cursor: pointer;
+    opacity: 0.8;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Dropdown Arrow */
+input[readonly][onclick*="toggleCustomDropdown"]:not(#stdLevelDisplay) {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="%234b5563"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>') !important;
+    background-repeat: no-repeat !important;
+    background-position: left 8px center !important;
+    background-size: 10px !important;
+    padding-left: 20px !important;
+}
+
+/* =========================================
+   Navigation & Tabs
+========================================= */
+.nav-item {
+    transition: all 0.2s;
+    opacity: 0.7;
+    border-bottom: 3px solid transparent;
+}
+
+.nav-item.active {
+    opacity: 1;
+    background: white;
+    color: #000;
+    font-weight: 800;
+    border-bottom-color: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sub-nav-item {
+    border: 1px solid #1e40af !important;
+    color: #1e40af;
+    background: transparent;
+    font-weight: bold;
+    transition: all 0.2s;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.sub-nav-item.active {
+    background: #1e40af !important;
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.2s ease-out; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-menu {
+    transform-origin: top center;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 50;
+}
+
+.dropdown-menu.show { opacity: 1; transform: scaleY(1); visibility: visible; }
+.dropdown-menu.hide { opacity: 0; transform: scaleY(0); visibility: hidden; }
+
+/* =========================================
+   Cards & Layouts
+========================================= */
+.glass-card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    border: 1px solid #d1d5db;
+    margin-bottom: 0.5rem;
+}
+
+.std-dash-card {
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #d1d5db;
+}
+
+.std-info-row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f3f4f6;
+    padding: 6px 0;
+    font-size: 11px;
+}
+
+.std-info-label { color: #4b5563; font-weight: 600; }
+.std-info-val { color: #111827; font-weight: 700; }
+
+.unified-card {
+    border: 4px double #1e3a8a;
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto 15px auto;
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.unified-card-title { font-size: 14pt; font-weight: bold; margin-bottom: 10px; color: #dc2626; }
+.unified-card-name { font-size: 18pt; font-weight: 900; margin: 10px 0; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px; color: #111827; word-break: break-word; }
+.unified-card-row { font-size: 11pt; font-weight: bold; margin: 5px 0; display: flex; justify-content: space-between; border-bottom: 1px dashed #d1d5db; padding: 4px 0; color: #1e3a8a; }
+.unified-card-footer { margin-top: 15px; font-size: 9pt; color: #6b7280; font-weight: bold; border-top: 1px solid #1e3a8a; padding-top: 5px; }
+
+/* =========================================
+   Tables (منع انكسار الكلمات نهائياً)
+========================================= */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    border: 1px solid #374151;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+@media (min-width: 768px) { .custom-table { font-size: 12px; } }
+
+.custom-table thead { background-color: #1e3a8a; color: white; font-weight: 800; border-bottom: 2px solid #000; }
+.custom-table th, .custom-table td {
+    padding: 5px 3px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.3;
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+.custom-table thead th { color: white !important; }
+
+.col-code { width: 45px; font-family: monospace; font-weight: bold; }
+.custom-table tbody td.col-code { color: #000; }
+.col-date { width: 55px; font-size: 9px; }
+.custom-table tbody td.col-date { color: #4b5563; }
+.col-index { width: 25px; color: #6b7280; }
+.col-action { width: 45px; min-width: 45px; }
+
+.ultra-compact-table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse;
+    font-size: 9px;
+}
+
+.ultra-compact-table th, .ultra-compact-table td {
+    border: 1px solid #d1d5db;
+    padding: 4px 1px !important;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    vertical-align: middle;
+    line-height: 1.2;
+}
+
+/* منع انكسار كلمات العناوين مثل كلمة حضور */
+.ultra-compact-table th {
+    background: #1e3a8a;
+    color: white;
+    font-size: 10px !important;
+    font-weight: bold;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    padding: 5px 2px !important;
+}
+
+@media (min-width: 768px) {
+    .ultra-compact-table, .ultra-compact-table th { font-size: 11px !important; padding: 5px !important; }
+}
+
+/* =========================================
+   Scanners & QR Containers Fix (حل نهائي للباركود)
+========================================= */
+.scanner-wrapper {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #000;
+    position: relative;
+    width: 100%;
+    height: 250px !important;
+    border: 2px solid #374151;
+}
+
+.scanner-wrapper video {
+    object-fit: cover;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0.5rem;
+}
+
+@media (min-width: 768px) { .scanner-wrapper { height: 400px !important; } }
+
+#html5-qrcode-button-camera-stop, 
+#html5-qrcode-anchor-scan-type-change {
+    display: none !important;
+}
+
+/* ضبط إظهار الباركود والتمركز بدون مربعات فارغة */
+#dashQr {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+}
+
+#dashQr img, #intDashQr img, #dashQr canvas, #intDashQr canvas {
+    width: 80px !important;
+    height: 80px !important;
+    max-width: 80px !important;
+    max-height: 80px !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+}
+
+#modalQr img, #modalQr canvas {
+    width: 100px !important;
+    height: 100px !important;
+    max-width: 100px !important;
+    max-height: 100px !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+}
+
+#dashQr img, #dashQr canvas {
+    width: 60px !important;
+    height: 60px !important;
+    max-width: 60px !important;
+    max-height: 60px !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+}
+
+/* =========================================
+   Loading Overlay Fix (تثبيت اللون واللوجو)
+========================================= */
+#loadingOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    transition: opacity 0.3s ease;
+}
+
+#loadingOverlay img {
+    width: 56px !important;
+    height: 56px !important;
+    object-fit: contain !important;
+    position: relative;
+    z-index: 10;
+    box-sizing: border-box;
+}
+
+#loadingOverlay div[class*="text-2xl"] {
+    font-size: 1.5rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em !important;
+    color: #ffffff !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.25 !important;
+    text-align: center !important;
+    box-sizing: border-box;
+}
+
+#loadingOverlay div[class*="text-2xl"] span,
+#loadingOverlay .text-red-500 {
+    color: #ef4444 !important;
+}
+
+#loadingOverlay div[class*="text-[10px]"] {
+    font-size: 10px !important;
+    color: #9ca3af !important;
+    font-family: monospace !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
+    box-sizing: border-box;
+}
+
+.spinner-box {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.modern-spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 4px solid rgba(255, 255, 255, 0.05);
+    border-left-color: #dc2626;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-sizing: border-box;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* =========================================
+   Modals & Overlays
+========================================= */
+#loginOverlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1e3a8a 0%, #111827 100%);
+    z-index: 100000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.98);
+    width: 100%;
+    max-width: 360px;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    border: 1px solid #4b5563;
+}
+
+.login-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #4b5563;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    padding-left: 2.5rem;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background: #dc2626;
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 13px;
+    border: 1px solid #991b1b;
+}
+
+.login-tab {
+    flex: 1;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 3px solid transparent;
+    color: #6b7280;
+}
+
+.login-tab.active {
+    color: #1e3a8a;
+    border-bottom-color: #1e3a8a;
+    background: #f3f4f6;
+    border-radius: 5px 5px 0 0;
+}
+
+#customAlertModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+}
+
+.alert-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border-top: 5px solid #1e3a8a;
+}
+
+.alert-icon { font-size: 35px; margin-bottom: 8px; display: block; }
+.alert-btn {
+    background: #1e3a8a;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-top: 15px;
+    width: 100%;
+    border: 1px solid #000;
+}
+
+.close-btn-modern {
+    width: 28px;
+    height: 28px;
+    background-color: #ef4444;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.circle-back-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #dc2626;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+
+.internal-page {
+    position: fixed;
+    inset: 0;
+    background: #f3f4f6;
+    z-index: 100000;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+}
+
+.internal-page.active { display: flex; }
+
+.internal-header {
+    background: white;
+    padding: 6px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1e3a8a;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    gap: 5px;
+}
+
+.a4-container {
+    background: white;
+    max-width: 800px;
+    margin: 10px auto;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    width: 98%;
+}
+
+.print-header-sim {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1e3a8a;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.print-header-sim .meta { font-size: 8px; color: #6b7280; text-align: right; line-height: 1.4; }
+.print-header-sim .title { text-align: center; flex: 1; }
+.print-header-sim .title h1 { font-size: 14px; font-weight: 900; color: #1e3a8a; margin: 0; }
+.print-header-sim .title h2 { font-size: 10px; font-weight: bold; color: #dc2626; margin: 2px 0 0 0; }
+.print-header-sim img { width: 35px; height: 35px; object-fit: contain; }
+
+#toast { z-index: 9999999 !important; }
+
+/* =========================================
+   Print Styles (تكبير الخط في الطباعة والـ PDF)
+========================================= */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        background: white !important;
+    }
+    
+    th, .ultra-compact-table th, .custom-table th {
+        background-color: #1e3a8a !important;
+        color: white !important;
+        font-size: 11px !important;
+        padding: 6px 4px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    td, .ultra-compact-table td, .custom-table td {
+        font-size: 11px !important;
+        padding: 6px 4px !important;
+        line-height: 1.4 !important;
+    }
+    
+    .no-print { display: none !important; }
+}
+/* ===== أصناف إضافية مستخدمة في الصفحات الجديدة ===== */
+.border-blue-100 { border-color: #dbeafe; }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.max-h-60 { max-height: 15rem; }
+.my-1 { margin-top: .25rem; margin-bottom: .25rem; }
+.py-3 { padding-top: .75rem; padding-bottom: .75rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

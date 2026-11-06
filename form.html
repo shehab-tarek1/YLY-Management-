@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a1a52">
+<title>YLY | استبيان</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:'Cairo',sans-serif}
+body{margin:0;background:#e8ecf7;color:#1f2937}
+.wrap{max-width:640px;margin:0 auto;padding:12px}
+.hero{background:linear-gradient(135deg,#071545,#0f2f86);color:#fff;border-radius:12px 12px 0 0;border-top:10px solid #d4af37;padding:22px 18px;text-align:center}
+.hero small{display:block;opacity:.85;font-size:12px}
+.hero h1{margin:6px 0 4px;font-size:22px;font-weight:900}
+.hero .sp{color:#facc15;font-weight:700;font-size:13px}
+.hero .t{background:#fff;color:#0a1a52;display:inline-block;border-radius:30px;padding:6px 20px;font-weight:900;font-size:17px;margin-top:12px;max-width:100%}
+.card{background:#fff;border-radius:10px;padding:16px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+label{display:block;font-weight:700;margin-bottom:8px;font-size:14px}
+label i{color:#dc2626;font-style:normal}
+input,select,textarea{width:100%;border:0;border-bottom:2px solid #cbd5e1;padding:8px 2px;font-size:14px;outline:none;background:transparent;border-radius:0}
+input:focus,select:focus,textarea:focus{border-bottom-color:#0f2f86}
+textarea{min-height:80px;resize:vertical}
+button{background:#0f2f86;color:#fff;border:0;border-radius:8px;padding:10px 26px;font-weight:800;font-size:14px;cursor:pointer}
+button:disabled{opacity:.6}
+.msg{padding:14px;border-radius:8px;font-weight:700;text-align:center;margin-top:12px}
+.err{background:#fee2e2;color:#991b1b}.ok{background:#dcfce7;color:#166534}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="hero">
+        <small>اتحاد</small>
+        <h1>شباب يدير شباب</h1>
+        <div class="sp">برعاية وزارة الشباب والرياضة</div>
+        <div id="title" class="t">...</div>
+        <small id="meta" style="margin-top:8px"></small>
+    </div>
+    <div id="state" class="msg hidden"></div>
+    <div id="formBox" class="hidden">
+        <div class="card"><label>الاسم <i>*</i></label><input id="fName" placeholder="اكتب اسمك رباعي كما هو مسجل" autocomplete="off"></div>
+        <div class="card"><label>اللجنة <i>*</i></label>
+            <select id="fCom"><option value="">اختر</option><option value="HR">HR</option><option value="PR">PR</option><option value="OR">OR</option><option value="SM">SM</option></select></div>
+        <div class="card"><label>الفيدباك</label><textarea id="fFb" placeholder="رأيك أو ملاحظاتك (اختياري)"></textarea></div>
+        <div style="margin-top:14px"><button id="send" onclick="send()">إرسال</button></div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const db = getFirestore(initializeApp(firebaseConfig));
+const $ = (id) => document.getElementById(id);
+const TYPES = { meeting: 'ميتنج', session: 'سيشن', event: 'ايفنت', task: 'تاسك' };
+const MODES = { online: 'أونلاين', offline: 'أوفلاين' };
+const norm = (t) => (t || '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, ' ').trim();
+const say = (m, cls) => { const s = $('state'); s.className = 'msg ' + cls; s.innerText = m; };
+let act = null;
+
+(async () => {
+    const code = (new URLSearchParams(location.search).get('c') || '').trim();
+    if (!code) return say('رابط غير صحيح', 'err');
+    try {
+        const s = await getDocs(query(collection(db, 'activities'), where('code', '==', code)));
+        if (s.empty) return say('لم يتم العثور على هذا الاستبيان', 'err');
+        act = { ...s.docs[0].data(), docId: s.docs[0].id };
+        $('title').innerText = act.title;
+        $('meta').innerText = `${TYPES[act.type]}${act.mode ? ' ' + MODES[act.mode] : ''} · ${act.date}`;
+        document.title = act.title + ' | YLY';
+        if (act.open === false) return say('تم إغلاق هذا الاستبيان', 'err');
+        $('formBox').classList.remove('hidden');
+    } catch (e) { say('تعذر تحميل الاستبيان، حاول مرة أخرى', 'err'); }
+})();
+
+window.send = async function () {
+    const name = $('fName').value.trim(), com = $('fCom').value, fb = $('fFb').value.trim();
+    if (!name || !com) return say('من فضلك أكمل الاسم واللجنة', 'err');
+    const btn = $('send'); btn.disabled = true;
+    try {
+        const all = (await getDocs(collection(db, 'members'))).docs.map(d => d.data());
+        let found = all.filter(m => norm(m.name) === norm(name) && m.committee === com);
+        if (!found.length) found = all.filter(m => norm(m.name) === norm(name));
+        if (!found.length) { btn.disabled = false; return say('الاسم غير مسجل، اكتب اسمك كما هو مسجل في اللجنة', 'err'); }
+        if (found.length > 1) { btn.disabled = false; return say('يوجد تشابه في الاسم، تواصل مع المسؤول', 'err'); }
+        const m = found[0], id = `${act.docId}_${m.id}`;
+        if ((await getDoc(doc(db, 'records', id))).exists()) { btn.disabled = false; return say('تم تسجيلك مسبقًا ✅', 'ok'); }
+        await setDoc(doc(db, 'records', id), {
+            activityId: act.docId, memberId: m.id, type: act.type, status: act.type === 'task' ? 'submitted' : 'present',
+            source: 'survey', committee: m.committee, name: m.name, feedback: fb, date: act.date, createdAt: new Date().toISOString()
+        });
+        $('formBox').classList.add('hidden');
+        say(`تم تسجيل حضورك يا ${m.name.split(' ')[0]} ✅ شكرًا لك`, 'ok');
+    } catch (e) { btn.disabled = false; say('حدث خطأ، حاول مرة أخرى', 'err'); }
+};
+</script>
+</body>
+</html>

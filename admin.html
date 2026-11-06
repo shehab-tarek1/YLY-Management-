@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a1a52">
+<title>YLY | لوحة الأدمن</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:'Cairo',sans-serif}
+body{margin:0;background:#f1f5f9;color:#1f2937;font-size:13px}
+.hidden{display:none!important}
+header{background:#0a1a52;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20}
+header b{font-size:15px}
+nav{background:#06123a;display:flex;gap:6px;padding:6px 10px;position:sticky;top:46px;z-index:19}
+nav button{flex:1;background:none;border:0;color:#bfdbfe;padding:7px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer}
+nav button.on{background:#1d4ed8;color:#fff}
+main{max-width:980px;margin:0 auto;padding:12px}
+.card{background:#fff;border-radius:10px;padding:12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h3{margin:0 0 8px;font-size:13px;color:#0a1a52}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.row>*{flex:1;min-width:120px}
+input,select,textarea{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;background:#fff}
+button.b{border:0;border-radius:6px;padding:8px 12px;font-weight:700;font-size:12px;cursor:pointer;color:#fff;background:#0a1a52}
+button.s{padding:4px 8px;font-size:11px}
+.red{background:#dc2626!important}.grn{background:#16a34a!important}.gry{background:#475569!important}
+table{width:100%;border-collapse:collapse}
+th{background:#0a1a52;color:#fff;padding:6px;font-size:11px}
+td{border-bottom:1px solid #e5e7eb;padding:6px;text-align:center;font-size:12px}
+.badge{padding:2px 8px;border-radius:5px;font-weight:700;font-size:11px}
+.ok{background:#dcfce7;color:#166534}.no{background:#fee2e2;color:#991b1b}.nt{background:#f3f4f6;color:#6b7280}
+.page{position:fixed;inset:0;background:#f1f5f9;z-index:50;overflow-y:auto;display:none}
+.page.on{display:block}
+.pagehead{background:#0a1a52;color:#fff;padding:10px 14px;display:flex;gap:10px;align-items:center;position:sticky;top:0;z-index:2}
+.pagehead button{background:#fff;color:#0a1a52;border:0;border-radius:50%;width:30px;height:30px;font-weight:900;cursor:pointer}
+.login{max-width:340px;margin:12vh auto;background:#fff;padding:18px;border-radius:12px;text-align:center}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:20px;color:#fff;font-weight:700;z-index:99}
+.link{background:#eef2ff;border:1px dashed #6366f1;border-radius:8px;padding:8px;word-break:break-all;direction:ltr;text-align:left;font-family:monospace;font-size:12px}
+.chk{display:flex;align-items:center;gap:8px;padding:6px;border-bottom:1px solid #e5e7eb}
+.chk input{width:auto}
+#coverWrap{width:100%;overflow:hidden;border-radius:8px}
+</style>
+</head>
+<body>
+
+<!-- تسجيل دخول الأدمن -->
+<div id="loginBox" class="login">
+    <h2 style="margin:0 0 4px;color:#0a1a52">YLY Admin</h2>
+    <p style="color:#6b7280;margin:0 0 12px;font-size:11px">لوحة التحكم</p>
+    <input id="aMail" type="email" placeholder="البريد الإلكتروني" style="margin-bottom:8px;direction:ltr">
+    <input id="aPass" type="password" placeholder="كلمة المرور" style="margin-bottom:10px;direction:ltr">
+    <button class="b" style="width:100%" onclick="A.login()">دخول</button>
+    <p id="aErr" class="hidden" style="color:#dc2626;font-weight:700;font-size:11px"></p>
+</div>
+
+<div id="app" class="hidden">
+<header><b>YLY | لوحة الأدمن</b><button class="b s red" onclick="A.logout()">خروج</button></header>
+<nav>
+    <button id="n-members" class="on" onclick="A.tab('members')">الأعضاء والـ HR</button>
+    <button id="n-acts" onclick="A.tab('acts')">الأنشطة والاستبيانات</button>
+</nav>
+<main>
+    <!-- ========== الأعضاء ========== -->
+    <section id="t-members">
+        <div class="card">
+            <h3>إضافة عضو / HR</h3>
+            <div class="row">
+                <input id="mName" placeholder="الاسم رباعي">
+                <input id="mPhone" type="tel" placeholder="رقم الهاتف">
+            </div>
+            <div class="row">
+                <select id="mCom"><option value="">اللجنة...</option><option>HR</option><option>PR</option><option>OR</option><option>SM</option></select>
+                <select id="mRole"><option value="member">عضو</option><option value="hr">HR (يتابع أعضاء)</option></select>
+                <button class="b" onclick="A.addMember()">حفظ</button>
+            </div>
+        </div>
+        <div class="card">
+            <h3>القائمة (<span id="mCount">0</span>)</h3>
+            <div class="row">
+                <input id="mSearch" placeholder="بحث بالاسم أو الكود" oninput="A.renderMembers()">
+                <select id="mFilter" onchange="A.renderMembers()"><option value="">كل اللجان</option><option>HR</option><option>PR</option><option>OR</option><option>SM</option></select>
+                <select id="mRoleF" onchange="A.renderMembers()"><option value="">الكل</option><option value="hr">HR فقط</option><option value="member">الأعضاء فقط</option></select>
+            </div>
+            <div style="overflow-x:auto"><table><thead><tr><th>الكود</th><th>الاسم</th><th>اللجنة</th><th>الدور</th><th>إجراء</th></tr></thead><tbody id="mBody"></tbody></table></div>
+        </div>
+    </section>
+
+    <!-- ========== الأنشطة ========== -->
+    <section id="t-acts" class="hidden">
+        <div class="card">
+            <h3>إنشاء نشاط جديد (ينتج كود استبيان تلقائي)</h3>
+            <div class="row">
+                <select id="aType" onchange="A.typeChanged()"><option value="meeting">ميتنج</option><option value="session">سيشن</option><option value="event">ايفنت</option><option value="task">تاسك</option></select>
+                <select id="aMode"><option value="online">أونلاين</option><option value="offline">أوفلاين</option></select>
+                <input id="aDate" type="date">
+            </div>
+            <div class="row">
+                <input id="aTitle" placeholder="عنوان الميتنج / السيشن / الايفنت / التاسك">
+                <button class="b" onclick="A.addActivity()">إنشاء</button>
+            </div>
+        </div>
+        <div class="card">
+            <h3>الأنشطة</h3>
+            <div class="row">
+                <select id="aFilter" onchange="A.renderActs()"><option value="">كل الأنواع</option><option value="meeting">ميتنج</option><option value="session">سيشن</option><option value="event">ايفنت</option><option value="task">تاسك</option></select>
+            </div>
+            <div style="overflow-x:auto"><table><thead><tr><th>الكود</th><th>النوع</th><th>العنوان</th><th>التاريخ</th><th>إجراء</th></tr></thead><tbody id="aBody"></tbody></table></div>
+        </div>
+    </section>
+</main>
+</div>
+
+<!-- ========== صفحة تحديد متابَعي الـ HR ========== -->
+<div id="pFollow" class="page">
+    <div class="pagehead"><button onclick="A.closePage('pFollow')">➔</button><b id="fTitle"></b></div>
+    <main>
+        <div class="card">
+            <p style="margin:0 0 6px;color:#6b7280">اختر الأعضاء اللي هيتابعهم (المعتاد من 2 إلى 4) — المختار: <b id="fCount">0</b></p>
+            <input id="fSearch" placeholder="بحث..." oninput="A.renderFollow()" style="margin-bottom:6px">
+            <div id="fList" style="max-height:60vh;overflow-y:auto"></div>
+            <button class="b grn" style="width:100%;margin-top:10px" onclick="A.saveFollow()">حفظ المتابَعين</button>
+        </div>
+    </main>
+</div>
+
+<!-- ========== صفحة النشاط ========== -->
+<div id="pAct" class="page">
+    <div class="pagehead"><button onclick="A.closeAct()">➔</button><b id="pTitle" style="flex:1"></b></div>
+    <main>
+        <div class="card">
+            <h3>رابط الاستبيان <span style="font-weight:400;color:#6b7280">(الكود <b id="pCode"></b>)</span></h3>
+            <div id="pLink" class="link"></div>
+            <div class="row" style="margin-top:8px">
+                <button class="b" onclick="A.copyLink()">نسخ الرابط</button>
+                <button id="pOpenBtn" class="b gry" onclick="A.toggleOpen()"></button>
+            </div>
+            <div id="pQr" style="text-align:center;margin-top:6px"></div>
+        </div>
+
+        <div class="card">
+            <h3>تسجيل حضور / تسليم يدوي</h3>
+            <div class="row">
+                <input id="qInput" placeholder="كود العضو أو الاسم" onkeydown="if(event.key==='Enter')A.quick()">
+                <button class="b" onclick="A.quick()">تسجيل</button>
+                <button id="qScanBtn" class="b gry" onclick="A.scan()">📷 QR</button>
+            </div>
+            <div id="qReaderWrap" class="hidden"><div id="qReader" style="width:100%"></div></div>
+        </div>
+
+        <div class="card">
+            <h3>الحالة (<span id="pStat"></span>)</h3>
+            <div class="row">
+                <input id="pSearch" placeholder="بحث..." oninput="A.renderAct()">
+                <select id="pCom" onchange="A.renderAct()"><option value="">كل اللجان</option><option>HR</option><option>PR</option><option>OR</option><option>SM</option></select>
+            </div>
+            <div style="overflow-x:auto"><table><thead><tr><th>الاسم</th><th>اللجنة</th><th>الحالة</th><th>المصدر</th><th>إجراء</th></tr></thead><tbody id="pBody"></tbody></table></div>
+        </div>
+
+        <div class="card">
+            <h3>الفيدباك (<span id="fbCount">0</span>)</h3>
+            <div id="fbList"></div>
+        </div>
+
+        <div class="card">
+            <h3>غلاف النشاط</h3>
+            <div class="row">
+                <div><label style="font-size:11px">شعار وزارة الشباب والرياضة</label><input type="file" accept="image/*" onchange="A.logo('min',this)"></div>
+                <div><label style="font-size:11px">شعار YLY</label><input type="file" accept="image/*" onchange="A.logo('yly',this)"></div>
+            </div>
+            <div id="coverWrap"><div id="coverScale" style="transform-origin:top right"></div></div>
+            <div class="row" style="margin-top:8px">
+                <button class="b grn" onclick="A.downloadCover()">⬇️ تحميل الغلاف PNG</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, setDoc, getDocs, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+// ⚠️ لازم يكون نفس الإيميل في firestore.rules
+const ADMIN_EMAILS = ['admin@yly.app'];
+
+const db = getFirestore(initializeApp(firebaseConfig));
+const auth = getAuth();
+const TYPES = { meeting: 'ميتنج', session: 'سيشن', event: 'ايفنت', task: 'تاسك' };
+const MODES = { online: 'أونلاين', offline: 'أوفلاين' };
+const S = { members: [], acts: [], recs: [], recMap: {}, cur: null, follow: null, sel: new Set(), scanner: null, lastScan: '', unsubs: [] };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => (s ?? '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = (t) => (t || '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+/g, ' ').trim();
+const today = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Cairo' });
+const toast = (m, ok = true) => { const t = document.createElement('div'); t.className = 'toast'; t.style.background = ok ? '#16a34a' : '#dc2626'; t.innerText = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); };
+const loadScript = (src) => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+const getAct = () => S.acts.find(a => a.docId === S.cur);
+const formUrl = (code) => location.href.replace(/admin\.html.*$/, '') + 'form.html?c=' + code;
+
+window.A = {
+    // ---------- الدخول ----------
+    async login() {
+        $('aErr').classList.add('hidden');
+        try { await signInWithEmailAndPassword(auth, $('aMail').value.trim(), $('aPass').value); }
+        catch (e) { $('aErr').innerText = 'بيانات الدخول غير صحيحة'; $('aErr').classList.remove('hidden'); }
+    },
+    async logout() { await signOut(auth); location.reload(); },
+    tab(t) {
+        ['members', 'acts'].forEach(x => { $('t-' + x).classList.toggle('hidden', x !== t); $('n-' + x).classList.toggle('on', x === t); });
+    },
+    closePage(id) { $(id).classList.remove('on'); },
+
+    // ---------- الأعضاء ----------
+    async addMember() {
+        const name = $('mName').value.trim(), committee = $('mCom').value, role = $('mRole').value;
+        let phone = $('mPhone').value.replace(/\D/g, ''); if (phone.startsWith('0')) phone = phone.substring(1);
+        if (!name || !committee) return toast('أكمل الاسم واللجنة', false);
+        if (S.members.some(m => norm(m.name) === norm(name))) return toast('الاسم مسجل بالفعل', false);
+        let id; do { id = String(Math.floor(1000 + Math.random() * 9000)); } while (S.members.some(m => m.id === id));
+        const password = String(Math.floor(100000 + Math.random() * 900000));
+        await addDoc(collection(db, 'members'), { id, name, committee, phone, role, followers: [], password, date: today(), createdAt: new Date().toISOString() });
+        ['mName', 'mPhone'].forEach(i => $(i).value = '');
+        alert(`تم الحفظ\nالكود: ${id}\nكلمة المرور: ${password}`);
+    },
+    renderMembers() {
+        const q = norm($('mSearch').value), c = $('mFilter').value, r = $('mRoleF').value;
+        const list = S.members.filter(m => (!c || m.committee === c) && (!r || m.role === r) && (!q || norm(m.name).includes(q) || m.id.startsWith(q)))
+            .sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+        $('mCount').innerText = list.length;
+        $('mBody').innerHTML = list.map(m => `<tr><td>${esc(m.id)}</td><td style="text-align:right">${esc(m.name)}</td><td>${esc(m.committee)}</td>
+            <td>${m.role === 'hr' ? `<span class="badge ok">HR (${(m.followers || []).length})</span>` : 'عضو'}</td>
+            <td style="white-space:nowrap">
+              ${m.role === 'hr' ? `<button class="b s grn" onclick="A.openFollow('${m.docId}')">المتابَعين</button>` : ''}
+              <button class="b s gry" onclick="A.info('${m.docId}')">بيانات</button>
+              <button class="b s" onclick="A.toggleRole('${m.docId}')">${m.role === 'hr' ? 'لعضو' : 'لـ HR'}</button>
+              <button class="b s red" onclick="A.delMember('${m.docId}')">حذف</button></td></tr>`).join('');
+    },
+    info(d) { const m = S.members.find(x => x.docId === d); alert(`${m.name}\nالكود: ${m.id}\nكلمة المرور: ${m.password}\nالهاتف: ${m.phone || '-'}`); },
+    async toggleRole(d) {
+        const m = S.members.find(x => x.docId === d);
+        await updateDoc(doc(db, 'members', d), { role: m.role === 'hr' ? 'member' : 'hr', followers: m.role === 'hr' ? [] : (m.followers || []) });
+    },
+    async delMember(d) {
+        const m = S.members.find(x => x.docId === d);
+        if (!confirm(`حذف ${m.name}؟`)) return;
+        await deleteDoc(doc(db, 'members', d));
+        for (const h of S.members.filter(x => x.role === 'hr' && (x.followers || []).includes(m.id)))
+            await updateDoc(doc(db, 'members', h.docId), { followers: h.followers.filter(i => i !== m.id) });
+    },
+    openFollow(d) {
+        const h = S.members.find(x => x.docId === d);
+        S.follow = d; S.sel = new Set(h.followers || []);
+        $('fTitle').innerText = 'متابَعو: ' + h.name; $('fSearch').value = '';
+        A.renderFollow(); $('pFollow').classList.add('on');
+    },
+    renderFollow() {
+        const q = norm($('fSearch').value), h = S.members.find(x => x.docId === S.follow);
+        if (!h) return;
+        $('fCount').innerText = S.sel.size;
+        $('fList').innerHTML = S.members.filter(m => m.id !== h.id && (!q || norm(m.name).includes(q)))
+            .sort((a, b) => a.name.localeCompare(b.name, 'ar'))
+            .map(m => `<label class="chk"><input type="checkbox" ${S.sel.has(m.id) ? 'checked' : ''} onchange="A.pick('${m.id}',this.checked)"><span>${esc(m.name)} <small style="color:#6b7280">(${esc(m.committee)} · ${esc(m.id)})</small></span></label>`).join('');
+    },
+    pick(id, on) { on ? S.sel.add(id) : S.sel.delete(id); $('fCount').innerText = S.sel.size; },
+    async saveFollow() {
+        await updateDoc(doc(db, 'members', S.follow), { followers: [...S.sel] });
+        toast('تم حفظ المتابَعين'); A.closePage('pFollow');
+    },
+
+    // ---------- الأنشطة ----------
+    typeChanged() { $('aMode').classList.toggle('hidden', !['meeting', 'session'].includes($('aType').value)); },
+    async addActivity() {
+        const type = $('aType').value, title = $('aTitle').value.trim(), date = $('aDate').value;
+        if (!title || !date) return toast('أكمل العنوان والتاريخ', false);
+        const code = String(Math.max(1000, ...S.acts.map(a => parseInt(a.code) || 0)) + 1);
+        const mode = ['meeting', 'session'].includes(type) ? $('aMode').value : (type === 'event' ? 'offline' : '');
+        await addDoc(collection(db, 'activities'), { type, mode, title, date, code, open: true, createdAt: new Date().toISOString() });
+        $('aTitle').value = ''; toast('تم إنشاء النشاط — الكود ' + code);
+    },
+    renderActs() {
+        const f = $('aFilter').value;
+        $('aBody').innerHTML = S.acts.filter(a => !f || a.type === f).map(a => `<tr><td><b>${esc(a.code)}</b></td>
+            <td>${TYPES[a.type]}${a.mode ? ' · ' + MODES[a.mode] : ''}</td><td style="text-align:right">${esc(a.title)}</td><td>${a.date}</td>
+            <td style="white-space:nowrap"><button class="b s" onclick="A.openAct('${a.docId}')">فتح</button>
+            <button class="b s red" onclick="A.delAct('${a.docId}')">حذف</button></td></tr>`).join('')
+            || '<tr><td colspan="5" style="color:#6b7280;padding:12px">لا توجد أنشطة</td></tr>';
+    },
+    async delAct(d) {
+        const a = S.acts.find(x => x.docId === d);
+        if (!confirm(`حذف "${a.title}" وكل سجلاتها؟`)) return;
+        for (const r of S.recs.filter(r => r.activityId === d)) await deleteDoc(doc(db, 'records', r.docId));
+        await deleteDoc(doc(db, 'activities', d));
+    },
+
+    // ---------- صفحة النشاط ----------
+    openAct(d) {
+        S.cur = d; const a = getAct();
+        $('pTitle').innerText = `${TYPES[a.type]} — ${a.title}`;
+        $('pCode').innerText = a.code;
+        $('pLink').innerText = formUrl(a.code);
+        $('qrBox')?.remove();
+        $('pQr').innerHTML = '';
+        loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js').then(() => new QRCode($('pQr'), { text: formUrl(a.code), width: 150, height: 150 })).catch(() => { });
+        $('pSearch').value = ''; $('pCom').value = '';
+        A.renderAct(); $('pAct').classList.add('on'); window.scrollTo(0, 0);
+    },
+    async closeAct() { await A.stopScan(); $('pAct').classList.remove('on'); S.cur = null; },
+    copyLink() { navigator.clipboard.writeText($('pLink').innerText).then(() => toast('تم نسخ الرابط')); },
+    async toggleOpen() { const a = getAct(); await updateDoc(doc(db, 'activities', a.docId), { open: a.open === false }); },
+    renderAct() {
+        const a = getAct(); if (!a) return;
+        const task = a.type === 'task';
+        $('pOpenBtn').innerText = a.open === false ? '🔒 الاستبيان مغلق (اضغط للفتح)' : '🔓 الاستبيان مفتوح (اضغط للإغلاق)';
+        $('pOpenBtn').className = 'b ' + (a.open === false ? 'red' : 'grn');
+        const q = norm($('pSearch').value), c = $('pCom').value;
+        const done = S.members.filter(m => S.recMap[`${a.docId}_${m.id}`]).length;
+        $('pStat').innerText = `${done} / ${S.members.length}`;
+        $('pBody').innerHTML = S.members.filter(m => (!c || m.committee === c) && (!q || norm(m.name).includes(q) || m.id.startsWith(q)))
+            .sort((x, y) => x.name.localeCompare(y.name, 'ar')).map(m => {
+                const r = S.recMap[`${a.docId}_${m.id}`];
+                const st = r ? `<span class="badge ok">${task ? 'سلّم' : 'حضر'}</span>` : `<span class="badge no">${task ? 'لم يسلّم' : 'غاب'}</span>`;
+                const src = r ? ({ survey: 'استبيان', qr: 'QR', manual: 'يدوي', hr: 'HR' }[r.source] || '') : '';
+                return `<tr><td style="text-align:right">${esc(m.name)}</td><td>${esc(m.committee)}</td><td>${st}</td><td>${src}</td>
+                <td><button class="b s ${r ? 'red' : 'grn'}" onclick="A.setRec('${m.id}',${!r},'manual')">${r ? 'إلغاء' : 'تسجيل'}</button></td></tr>`;
+            }).join('');
+        const fb = S.recs.filter(r => r.activityId === a.docId && r.feedback);
+        $('fbCount').innerText = fb.length;
+        $('fbList').innerHTML = fb.map(r => `<div style="border-bottom:1px solid #e5e7eb;padding:6px 0"><b>${esc(r.name)}</b> <small style="color:#6b7280">(${esc(r.committee)})</small><div>${esc(r.feedback)}</div></div>`).join('') || '<p style="color:#6b7280;margin:0">لا يوجد فيدباك</p>';
+        A.renderCover();
+    },
+    async setRec(memberId, on, source) {
+        const a = getAct(), m = S.members.find(x => x.id === memberId), id = `${a.docId}_${memberId}`;
+        if (on) await setDoc(doc(db, 'records', id), { activityId: a.docId, memberId, type: a.type, status: a.type === 'task' ? 'submitted' : 'present', source, committee: m.committee, name: m.name, date: a.date, createdAt: new Date().toISOString() });
+        else await deleteDoc(doc(db, 'records', id));
+    },
+    async quick(codeOverride, source = 'manual') {
+        const v = (codeOverride ?? $('qInput').value).trim(); if (!v) return;
+        let m = S.members.find(x => x.id === v);
+        if (!m) { const found = S.members.filter(x => norm(x.name).includes(norm(v))); if (found.length === 1) m = found[0]; else if (found.length > 1) return toast('أكتر من نتيجة، اكتب اسم أدق أو الكود', false); }
+        if (!m) return toast('العضو غير موجود', false);
+        if (S.recMap[`${S.cur}_${m.id}`]) return toast(`${m.name} مسجل بالفعل`, false);
+        await A.setRec(m.id, true, source); $('qInput').value = ''; toast('تم تسجيل ' + m.name);
+    },
+    async scan() {
+        if (S.scanner) return A.stopScan();
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js');
+        $('qReaderWrap').classList.remove('hidden'); $('qScanBtn').innerText = '✖ إيقاف';
+        S.scanner = new Html5Qrcode('qReader');
+        S.scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 200, height: 200 } }, (t) => {
+            if (t === S.lastScan) return; S.lastScan = t; setTimeout(() => S.lastScan = '', 2000);
+            A.quick(t, 'qr');
+        }).catch(() => { toast('تعذر تشغيل الكاميرا', false); A.stopScan(); });
+    },
+    async stopScan() {
+        try { if (S.scanner) { await S.scanner.stop(); S.scanner.clear(); } } catch (e) { }
+        S.scanner = null; $('qReaderWrap').classList.add('hidden'); $('qScanBtn').innerText = '📷 QR';
+    },
+
+    // ---------- الغلاف ----------
+    logo(k, input) {
+        const f = input.files[0]; if (!f) return;
+        const r = new FileReader(); r.onload = () => { try { localStorage.setItem('logo_' + k, r.result); } catch (e) { toast('الصورة كبيرة', false); } A.renderCover(); };
+        r.readAsDataURL(f);
+    },
+    coverHTML(a) {
+        const frame = (img, txt) => `<div style="width:230px;height:230px;border:6px solid #d4af37;border-radius:30px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:14px;text-align:center;font-size:28px;font-weight:800">${img ? `<img src="${img}" crossorigin="anonymous" style="max-width:100%;max-height:100%;object-fit:contain">` : txt}</div>`;
+        const yly = localStorage.getItem('logo_yly') || 'https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1784657850/s60xlqx1otmwcijtjw1l.png';
+        return `<div style="width:1280px;height:720px;direction:rtl;background:linear-gradient(135deg,#071545,#0f2f86);color:#fff;font-family:'Cairo',sans-serif;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:46px 60px">
+            <div style="width:100%;display:flex;justify-content:space-between;align-items:center">${frame(localStorage.getItem('logo_min'), 'وزارة الشباب والرياضة')}${frame(yly, 'YLY')}</div>
+            <div style="text-align:center"><div style="font-size:78px;font-weight:900;line-height:1.2">اتحاد شباب يدير شباب</div><div style="font-size:38px;font-weight:700;color:#facc15;margin-top:8px">برعاية وزارة الشباب والرياضة</div></div>
+            <div style="text-align:center;width:100%"><div style="background:#fff;color:#0a1a52;border-radius:60px;padding:14px 40px;font-size:44px;font-weight:900;display:inline-block;max-width:100%">${esc(a.title)}</div>
+            <div style="margin-top:10px;font-size:24px;opacity:.85">${TYPES[a.type]}${a.mode ? ' ' + MODES[a.mode] : ''} · ${a.date}</div></div></div>`;
+    },
+    renderCover() {
+        const a = getAct(); if (!a) return;
+        const w = $('coverWrap').clientWidth || 600, sc = w / 1280;
+        $('coverScale').style.transform = `scale(${sc})`;
+        $('coverScale').style.width = '1280px';
+        $('coverWrap').style.height = (720 * sc) + 'px';
+        $('coverScale').innerHTML = A.coverHTML(a);
+    },
+    async downloadCover() {
+        const a = getAct();
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+        const h = document.createElement('div'); h.style.cssText = 'position:fixed;left:-9999px;top:0';
+        h.innerHTML = A.coverHTML(a); document.body.appendChild(h);
+        try {
+            const c = await html2canvas(h.firstElementChild, { scale: 1, useCORS: true, backgroundColor: null });
+            const l = document.createElement('a'); l.download = `cover_${a.code}.png`; l.href = c.toDataURL('image/png'); l.click();
+        } catch (e) { toast('تعذر إنشاء الصورة', false); }
+        h.remove();
+    }
+};
+
+// ---------- البيانات ----------
+onAuthStateChanged(auth, (u) => {
+    S.unsubs.forEach(f => f()); S.unsubs = [];
+    if (!u) { $('loginBox').classList.remove('hidden'); $('app').classList.add('hidden'); return; }
+    if (!ADMIN_EMAILS.includes((u.email || '').toLowerCase())) {
+        signOut(auth); $('aErr').innerText = 'هذا الحساب ليس أدمن'; $('aErr').classList.remove('hidden'); return;
+    }
+    $('loginBox').classList.add('hidden'); $('app').classList.remove('hidden');
+    $('aDate').value = today(); A.typeChanged();
+    S.unsubs.push(onSnapshot(collection(db, 'members'), s => {
+        S.members = s.docs.map(d => ({ ...d.data(), docId: d.id }));
+        A.renderMembers(); if (S.cur) A.renderAct(); if ($('pFollow').classList.contains('on')) A.renderFollow();
+    }));
+    S.unsubs.push(onSnapshot(collection(db, 'activities'), s => {
+        S.acts = s.docs.map(d => ({ ...d.data(), docId: d.id })).sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.code || '').localeCompare(a.code || ''));
+        A.renderActs(); if (S.cur) A.renderAct();
+    }));
+    S.unsubs.push(onSnapshot(collection(db, 'records'), s => {
+        S.recs = s.docs.map(d => ({ ...d.data(), docId: d.id }));
+        S.recMap = {}; S.recs.forEach(r => S.recMap[`${r.activityId}_${r.memberId}`] = r);
+        if (S.cur) A.renderAct();
+    }));
+});
+window.addEventListener('resize', () => S.cur && A.renderCover());
+</script>
+</body>
+</html>
